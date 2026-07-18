@@ -270,7 +270,7 @@
 
 ## Pt. 4 - Cleaning Up
 
-### Since I was able to successfully SSH into the VM, I decided to exit the SSH conncection, delete my VM and resource group, and verify that all resources have been torn down so as to not incur any unnecessary costs.
+### Since I was able to successfully SSH into the VM, I decided to exit the SSH connection, delete my VM and resource group, and verify that all resources have been torn down so as to not incur any unnecessary costs.
 
 > derek [ ~ ]$ az vm delete \
 > --name TVM2 \
