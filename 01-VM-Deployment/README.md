@@ -1,6 +1,6 @@
 # Project 01 - Create resource group and VM, establish SSH connection, delete VM and resource group.
 
-## Resource Group Creation
+## Pt. 1 - Resource Group Creation
 
 ### Upon connecting to Azure CLI, the first thing I did was create a resource group. I had previously tried using variables for the name/location (i.e. "export RESOURCE_GROUP_NAME=TRG$RANDOM_ID"), but I was encountering issues, so I opted to use literals instead of variables.
 
@@ -20,7 +20,7 @@
 >   "type": "Microsoft.Resources/resourceGroups"
 > }
 
-## VM Creation
+## Pt. 2 - VM Creation
 
 ### Then, I set the VM image to the latest Ubuntu 22.04 image.
 
@@ -109,7 +109,7 @@
 >   "resourceGroup": "TRG1.0"
 }
 
-## SSH
+## Pt. 3 - SSH
 
 ### I attempted to SSH into the VM, but was denied.
 
@@ -268,7 +268,7 @@
 > debug1: pledge: fork
 > Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 6.8.0-1062-azure x86_64)
 
-## Cleaning Up
+## Pt. 4 - Cleaning Up
 
 ### Since I was able to successfully SSH into the VM, I decided to exit the SSH conncection, delete my VM and resource group, and verify that all resources have been torn down so as to not incur any unnecessary costs.
 
