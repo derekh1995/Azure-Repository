@@ -21,11 +21,11 @@ derek [ ~ ]$ az group create \
 
 ## VM Creation
 
-# Then, I set the VM image to the latest Ubuntu 22.04 image.
+### Then, I set the VM image to the latest Ubuntu 22.04 image.
 
 derek [ ~ ]$ export vm_image="Canonical:0001-com-ubuntu-minimal-jammy:minimal-22_04-lts-gen2:latest"
 
-# I attempted to create a VM
+### I attempted to create a VM
 
 derek [ ~ ]$ az vm create \
 > --resource-group TRG1.0 \
@@ -37,7 +37,7 @@ derek [ ~ ]$ az vm create \
 > --public-ip-sku Standard
 ERROR: the following arguments are required: --name/-n, --resource-group/-g
 
-# The VM image failed, because I didn't use capital letters when setting its value earlier. Therefore, I reset the value correctly and verified it was accepted.
+### The VM image failed, because I didn't use capital letters when setting its value earlier. Therefore, I reset the value correctly and verified it was accepted.
 
 derek [ ~ ]$ echo $VM_IMAGE
 
@@ -45,7 +45,7 @@ derek [ ~ ]$ export VM_IMAGE="Canonical:0001-com-ubuntu-minimal-jammy:minimal-22
 derek [ ~ ]$ echo $VM_IMAGE
 Canonical:0001-com-ubuntu-minimal-jammy:minimal-22_04-lts-gen2:latest
 
-# Then I could reattempt VM creation
+### Then I could reattempt VM creation
 
 derek [ ~ ]$ az vm create \
 > --resource-group TRG1.0 \
@@ -56,13 +56,13 @@ derek [ ~ ]$ az vm create \
 > --generate-ssh-keys \
 > --public-ip-sku Standard
 
-# The SSH keys were generated, but then I got a long error which had the below notifcation that the VM size was not available in my location.
+### The SSH keys were generated, but then I got a long error which had the below notifcation that the VM size was not available in my location.
 
 Exception Details:      (SkuNotAvailable) The requested VM size for resource 'Following SKUs have failed for Capacity Restrictions: Standard_D2s_v5' is currently not available in location 'eastus2'. Please try another size or deploy to a different location or different zone. See https://aka.ms/azureskunotavailable for details.
         Code: SkuNotAvailable
         Message: The requested VM size for resource 'Following SKUs have failed for Capacity Restrictions: Standard_D2s_v5' is currently not available in location 'eastus2'. Please try another size or deploy to a different location or different zone. See https://aka.ms/azureskunotavailable for details.
 
-# Next, I checked the available Standard_B VM sizes in eastus2 with grep. I searched for Standard_B because they're generally the cheapest sizes.
+### Next, I checked the available Standard_B VM sizes in eastus2 with grep. I searched for Standard_B because they're generally the cheapest sizes.
 
 derek [ ~ ]$ az vm list-skus \
 > --location eastus2 \
@@ -70,7 +70,7 @@ derek [ ~ ]$ az vm list-skus \
 > --output table
 > | grep Standard_B
 
-# There were no Standard_B VMs available, so I checked Standard_D next. Since there were no Bs, Ds are the next cheapest.
+### There were no Standard_B VMs available, so I checked Standard_D next. Since there were no Bs, Ds are the next cheapest.
 
 derek [ ~ ]$ az vm list-skus \
 > --location eastus2 \
@@ -78,7 +78,7 @@ derek [ ~ ]$ az vm list-skus \
 > --output table
 > | grep Standard_D
 
-# There were a ton of available Standard_D VM sizes available, so I chose Standard_D2s_v7. Success.
+### There were a ton of available Standard_D VM sizes available, so I chose Standard_D2s_v7. Success.
 
 derek [ ~ ]$ az vm create \
 > --resource-group TRG1.0 \
@@ -108,7 +108,7 @@ No access was given yet to the 'TVM1', because '--scope' was not provided. You s
 
 ## SSH
 
-# I attempted to SSH into the VM, but was denied.
+### I attempted to SSH into the VM, but was denied.
 
 derek [ ~ ]$ ssh operator@20.242.53.242
 The authenticity of host '20.242.53.242 (20.242.53.242)' can't be established.
@@ -119,7 +119,7 @@ Warning: Permanently added '20.242.53.242' (ED25519) to the list of known hosts.
 operator@20.242.53.242: Permission denied (publickey).
 '
 
-# I attempted troubleshooting for about 45 minutes using various different commands (e.g. verbose ssh, az vm run-command invoke w/ the command "id operator", etc.), but ultimately could not SSH into the machine. It turned out that the admin-username "operator" was not actually being created on with the VM, so SSHing into the machine was impossible. So, I deleted the VM and verified its deletion.
+### I attempted troubleshooting for about 45 minutes using various different commands (e.g. verbose ssh, az vm run-command invoke w/ the command "id operator", etc.), but ultimately could not SSH into the machine. It turned out that the admin-username "operator" was not actually being created on with the VM, so SSHing into the machine was impossible. So, I deleted the VM and verified its deletion.
 
 derek [ ~ ]$ az vm delete \
 > --resource-group TRG1.0 \
@@ -132,7 +132,7 @@ derek [ ~ ]$ az vm show \
 Code: ResourceNotFound
 Message: The Resource 'Microsoft.Compute/virtualMachines/TVM1' under resource group 'TRG1.0' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix
 
-# However, I wanted to try one more thing, so I verified the group still exists, and then tried spinning up a new VM with more specific admin username and different image.
+### However, I wanted to try one more thing, so I verified the group still exists, and then tried spinning up a new VM with more specific admin username and different image.
 
 derek [ ~ ]$ az group show \
 > --name TRG1.0
@@ -168,7 +168,7 @@ Consider upgrading security for your workloads using Azure Trusted Launch VMs. T
   "publicIpAddress": "20.242.80.113",
   "resourceGroup": "TRG1.0"
 
-# I then checked to see if the admin username was created. The admin-username was finally appearing.
+### I then checked to see if the admin username was created. The admin-username was finally appearing.
 
   derek [ ~ ]$ az vm run-command invoke \
   --resource-group TRG1.0 \
@@ -186,7 +186,7 @@ Consider upgrading security for your workloads using Azure Trusted Launch VMs. T
   ]
 }
 
-# I then successfully SSH'd into the new derekadmin account.
+### I then successfully SSH'd into the new derekadmin account.
 
 derek [ ~ ]$ ssh -v -i ~/.ssh/id_rsa derekadmin@20.242.80.113
 OpenSSH_9.8p1, OpenSSL 3.3.5 30 Sep 2025
@@ -262,7 +262,7 @@ Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 6.8.0-1062-azure x86_64)
 
 ## Cleaning Up
 
-# Since I was able to successfully SSH into the VM, I decided to exit the SSH conncection, delete my VM and resource group, and verify that all resources have been torn down so as to not incur any unnecessary costs.
+### Since I was able to successfully SSH into the VM, I decided to exit the SSH conncection, delete my VM and resource group, and verify that all resources have been torn down so as to not incur any unnecessary costs.
 
 derek [ ~ ]$ az vm delete \
 > --name TVM2 \
