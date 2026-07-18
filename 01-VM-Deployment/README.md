@@ -285,12 +285,15 @@
 > (ResourceNotFound) The Resource 'Microsoft.Compute/virtualMachines/TVM2' under resource group 'TRG1.0' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix
 > Code: ResourceNotFound
 > Message: The Resource 'Microsoft.Compute/virtualMachines/TVM2' under resource group 'TRG1.0' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix
+>
 > derek [ ~ ]$ az vm show \
 > --name TVM1 \
 > --resource-group TRG1.0
+>
 > (ResourceNotFound) The Resource 'Microsoft.Compute/virtualMachines/TVM1' under resource group 'TRG1.0' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix
 > Code: ResourceNotFound
 > Message: The Resource 'Microsoft.Compute/virtualMachines/TVM1' under resource group 'TRG1.0' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix
+>
 > derek [ ~ ]$ az group show \
 > --name TRG1.0
 >
