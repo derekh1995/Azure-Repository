@@ -1,4 +1,4 @@
-# Project 02 - Networking
+# Project 02 - Networking (Creating VNet and subnets, verifying ICMP communication between two VMs, practice with file transferring, etc.)
 
 ## Provisioning Resources and Setting up the Network
 
@@ -91,7 +91,7 @@
 >   "type": "Microsoft.Network/virtualNetworks/subnets"
 > }
 > 
-### After the network was ready, I created two VMs -- one in each subnet. It took me a few tries to remember how to do so.
+### After the network was ready, I created two VMs -- one in each subnet. It took me a few tries to use the correct syntax.
 > 
 > derek [ ~ ]$ az vm create \
 > --name VM1 \
@@ -226,6 +226,8 @@
 >   "resourceGroup": "TRG"
 > }
 
+## Validation of Builds
+
 ### After I created the VMs, I did some quick verifications to make sure the VMs and their associated accounts were successfully created. I did this by listing the VMs and then having the VMs run id commands as root to check their status.
 
 > derek [ ~ ]$ az vm list \
@@ -269,6 +271,8 @@
 >     }
 >   ]
 > }
+
+## SSHing into Machines and Pinging
 
 ### After verifying the VMs and accounts were good, I ran a verbose SSH into derekadmin1. The SSH was successful, but using -v was unnecessary and just flooded my terminal with information I didn't need. Upon entering VM1, I began to ping VM2 via its private IP. After communicating with VM2, I exited the VM.
 
@@ -364,6 +368,8 @@
 > logout
 > Connection to 20.42.100.157 closed.
 
+## Network Verification
+
 ### I SSH'd into both VMs again to verify the network.
 
 > derek [ ~ ]$ ssh derekadmin1@20.51.147.79
@@ -411,162 +417,99 @@
 >
 > derekadmin2@VM2:~$ ip addr
 > 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    inet 127.0.0.1/8 scope host lo
-       valid_lft forever preferred_lft forever
-    inet6 ::1/128 scope host 
-       valid_lft forever preferred_lft forever
-2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-    link/ether 00:0d:3a:12:03:14 brd ff:ff:ff:ff:ff:ff
-    inet 10.0.2.4/24 metric 100 brd 10.0.2.255 scope global eth0
-       valid_lft forever preferred_lft forever
-    inet6 fe80::20d:3aff:fe12:314/64 scope link 
-       valid_lft forever preferred_lft forever
-3: enP30832s1: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc mq master eth0 state UP group default qlen 1000
-    link/ether 00:0d:3a:12:03:14 brd ff:ff:ff:ff:ff:ff
-    altname enp0s0
-derekadmin2@VM2:~$ exit
-logout
-Connection to 20.42.100.157 closed.
+>     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+>     inet 127.0.0.1/8 scope host lo
+>        valid_lft forever preferred_lft forever
+>     inet6 ::1/128 scope host 
+>        valid_lft forever preferred_lft forever
+> 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+>     link/ether 00:0d:3a:12:03:14 brd ff:ff:ff:ff:ff:ff
+>     inet 10.0.2.4/24 metric 100 brd 10.0.2.255 scope global eth0
+>        valid_lft forever preferred_lft forever
+>     inet6 fe80::20d:3aff:fe12:314/64 scope link 
+>        valid_lft forever preferred_lft forever
+> 3: enP30832s1: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc mq master eth0 state UP group default qlen 1000
+>     link/ether 00:0d:3a:12:03:14 brd ff:ff:ff:ff:ff:ff
+>     altname enp0s0
+>
+> derekadmin2@VM2:~$ exit
+>
+> logout
+> Connection to 20.42.100.157 closed.
 
-### I tried to transfer a file from VM1 to VM2, but the two VMs don't have each other's private keys, so I decided to save file transferring between VMs for a later project.
+## SCP File Transfers
 
-derek [ ~ ]$ ssh derekadmin1@20.51.147.79
-Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 6.8.0-1062-azure x86_64)
+### I tried to transfer a file from VM1 to VM2, but the two VMs don't have each other's keys, and it was getting late, so I decided to save file transferring between VMs for a later project.
 
- * Documentation:  https://help.ubuntu.com
- * Management:     https://landscape.canonical.com
- * Support:        https://ubuntu.com/pro
+> derek [ ~ ]$ ssh derekadmin1@20.51.147.79
+> 
+> derekadmin1@VM1:~$ nano hello.txt
+>
+> derekadmin1@VM1:~$ cat hello.txt
+> Hello from VM1!
+>
+> derekadmin1@VM1:~$ scp hello.txt derekadmin2@10.0.2.4:/home/derekadmin2
+>
+> The authenticity of host '10.0.2.4 (10.0.2.4)' can't be established.
+> ED25519 key fingerprint is SHA256:76Tg3qg/ue+rRfsKC3oPDFYIHk8iRuiL3Mu106soH8k.
+> This key is not known by any other names
+> Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+> Warning: Permanently added '10.0.2.4' (ED25519) to the list of known hosts.
+> derekadmin2@10.0.2.4: Permission denied (publickey).
+> lost connection
+>
+> derekadmin1@VM1:~$ exit
+>
+> logout
+> Connection to 20.51.147.79 closed.
 
- System information as of Sun Jul 19 23:36:56 UTC 2026
+### I still wanted to get some experience with testing file transfers, so I used SCP to transfer files to both VMs from Azure CLI and then SSH'd into the VMs to verify the files were successfully transferred.
 
-  System load:  0.0               Processes:             114
-  Usage of /:   6.0% of 28.89GB   Users logged in:       0
-  Memory usage: 3%                IPv4 address for eth0: 10.0.1.4
-  Swap usage:   0%
+> derek [ ~ ]$ nano test.txt
+>
+> derek [ ~ ]$ cat test.txt
+>
+> Testing... Testing... 1, 2, 3.
+>
+> derek [ ~ ]$ scp test.txt derekadmin1@20.51.147.79:/home/derekadmin1
+>
+> test.txt                                                                                                                                                                                                                                                                    >                100%   31    10.1KB/s   00:00    
+>
+> derek [ ~ ]$ scp test.txt derekadmin2@20.42.100.157:/home/derekadmin2
+>
+> test.txt                                                                                                                                                                                                                                                                    >                100%   31     9.5KB/s   00:00    
+>
+> derek [ ~ ]$ ssh derekadmin1@20.51.147.79
+>
+> derekadmin1@VM1:~$ cat test.txt
+>
+> Testing... Testing... 1, 2, 3.
+>
+> derekadmin1@VM1:~$ exit
+>
+> logout
+> Connection to 20.51.147.79 closed.
+>
+> derek [ ~ ]$ ssh derekadmin2@20.42.100.157
+>
+> derekadmin2@VM2:~$ cat test.txt
+>
+> Testing... Testing... 1, 2, 3.
+>
+> derekadmin2@VM2:~$ exit
+>
+> logout
+> Connection to 20.42.100.157 closed.
 
+## Clean-up
 
-Expanded Security Maintenance for Applications is not enabled.
+### After verifying the files were transferred, I concluded my project, deleted the resource group, and verified it was deleted.
 
-0 updates can be applied immediately.
-
-Enable ESM Apps to receive additional future security updates.
-See https://ubuntu.com/esm or run: sudo pro status
-
-New release '24.04.4 LTS' available.
-Run 'do-release-upgrade' to upgrade to it.
-
-
-Last login: Sun Jul 19 23:30:58 2026 from 20.42.18.188
-To run a command as administrator (user "root"), use "sudo <command>".
-See "man sudo_root" for details.
-
-derekadmin1@VM1:~$ nano hello.txt
-derekadmin1@VM1:~$ cat hello.txt
-Hello from VM1!
-derekadmin1@VM1:~$ scp hello.txt derekadmin2@10.0.2.4:/home/derekadmin2
-The authenticity of host '10.0.2.4 (10.0.2.4)' can't be established.
-ED25519 key fingerprint is SHA256:76Tg3qg/ue+rRfsKC3oPDFYIHk8iRuiL3Mu106soH8k.
-This key is not known by any other names
-Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
-Warning: Permanently added '10.0.2.4' (ED25519) to the list of known hosts.
-derekadmin2@10.0.2.4: Permission denied (publickey).
-lost connection
-derekadmin1@VM1:~$ derekadmin1@VM1:~$ scp hello.txt derekadmin2@10.0.2.4:/home/derekadmin2
-The authenticity of host '10.0.2.4 (10.0.2.4)' can't be established.
-ED25519 key fingerprint is SHA256:76Tg3qg/ue+rRfsKC3oPDFYIHk8iRuiL3Mu106soH8k.
-This key is not known by any other names
-Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
-Warning: Permanently added '10.0.2.4' (ED25519) to the list of known hosts.
-derekadmin2@10.0.2.4: Permission denied (publickey).
-lost connection
-derekadmin1@VM1:~$ exit
-logout
-Connection to 20.51.147.79 closed.
-
-### I used SCP to transfer files to both VMs and then SSH'd into the VMs to verify the files were successfully transferred.
-
-derek [ ~ ]$ nano test.txt
-derek [ ~ ]$ cat test.txt
-Testing... Testing... 1, 2, 3.
-derek [ ~ ]$ scp test.txt derekadmin1@20.51.147.79:/home/derekadmin1
-test.txt                                                                                                                                                                                                                                                                                   100%   31    10.1KB/s   00:00    
-derek [ ~ ]$ scp test.txt derekadmin2@20.42.100.157:/home/derekadmin2
-test.txt                                                                                                                                                                                                                                                                                   100%   31     9.5KB/s   00:00    
-derek [ ~ ]$ ssh derekadmin1@20.51.147.79
-Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 6.8.0-1062-azure x86_64)
-
- * Documentation:  https://help.ubuntu.com
- * Management:     https://landscape.canonical.com
- * Support:        https://ubuntu.com/pro
-
- System information as of Sun Jul 19 23:45:43 UTC 2026
-
-  System load:  0.0               Processes:             116
-  Usage of /:   6.0% of 28.89GB   Users logged in:       0
-  Memory usage: 4%                IPv4 address for eth0: 10.0.1.4
-  Swap usage:   0%
-
-
-Expanded Security Maintenance for Applications is not enabled.
-
-0 updates can be applied immediately.
-
-Enable ESM Apps to receive additional future security updates.
-See https://ubuntu.com/esm or run: sudo pro status
-
-New release '24.04.4 LTS' available.
-Run 'do-release-upgrade' to upgrade to it.
-
-
-Last login: Sun Jul 19 23:36:56 2026 from 20.42.18.188
-To run a command as administrator (user "root"), use "sudo <command>".
-See "man sudo_root" for details.
-
-derekadmin1@VM1:~$ cat test.txt
-Testing... Testing... 1, 2, 3.
-derekadmin1@VM1:~$ exit
-logout
-Connection to 20.51.147.79 closed.
-derek [ ~ ]$ ssh derekadmin2@20.42.100.157
-Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 6.8.0-1062-azure x86_64)
-
- * Documentation:  https://help.ubuntu.com
- * Management:     https://landscape.canonical.com
- * Support:        https://ubuntu.com/pro
-
- System information as of Sun Jul 19 23:46:21 UTC 2026
-
-  System load:  0.0               Processes:             114
-  Usage of /:   6.0% of 28.89GB   Users logged in:       0
-  Memory usage: 3%                IPv4 address for eth0: 10.0.2.4
-  Swap usage:   0%
-
-
-Expanded Security Maintenance for Applications is not enabled.
-
-0 updates can be applied immediately.
-
-Enable ESM Apps to receive additional future security updates.
-See https://ubuntu.com/esm or run: sudo pro status
-
-New release '24.04.4 LTS' available.
-Run 'do-release-upgrade' to upgrade to it.
-
-
-Last login: Sun Jul 19 23:31:54 2026 from 20.42.18.188
-To run a command as administrator (user "root"), use "sudo <command>".
-See "man sudo_root" for details.
-
-derekadmin2@VM2:~$ cat test.txt
-Testing... Testing... 1, 2, 3.
-derekadmin2@VM2:~$ exit
-logout
-Connection to 20.42.100.157 closed.
-
-derek [ ~ ]$ az group delete \
+> derek [ ~ ]$ az group delete \
 > --name TRG \
 > --yes
-derek [ ~ ]$ az group exists \
+>
+> derek [ ~ ]$ az group exists \
 > --name TRG
-false
+> 
+> false
